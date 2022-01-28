@@ -37,7 +37,6 @@ function populateShows(shows) {
              <h5 class="card-title">${show.name}</h5>
              <p class="card-text">${show.summary}</p>
              <button id="${show.id}"> Episodes </button>
-             <div class="episodes-area" id=${show.id}></div>
            </div>
          </div>
        </div>
@@ -54,9 +53,8 @@ async function getEpisodes(id) {
 
 async function populateEpisodes(episodes) {
   const card = document.querySelector(`#episodes-area`)
-  console.log(card);
   const episodeList = document.createElement("ul");
-  episodeList.innerText = `Total Episodes: ${await episodes.length}`
+  episodeList.innerText = `Total Episodes: ${(await episodes).length}`
   if ((await episodes).length < 10) {
     max = (await episodes).length - 1;
   } else {
@@ -65,9 +63,6 @@ async function populateEpisodes(episodes) {
 
   for (let i = 0; i < max; i++) {
     const newEp = document.createElement("li");
-    console.log(await episodes);
-    console.log(i);
-    console.log((await episodes)[i]);
     newEp.innerText = (await episodes)[i].name;
     episodeList.append(newEp);
   }
@@ -83,13 +78,13 @@ $("#search-form").on("submit", async function handleSearch (evt) {
   $("#episodes-area").hide();
 
   let shows = await searchShows(query);
-  let episodes = await getEpisodes(this.id);
-
-  populateEpisodes(episodes);
   populateShows(shows);
 
   $("button").on("click", function(e) {
     e.preventDefault();
+    $("#episodes-area").empty();
+    const episodes = getEpisodes(this.id);
+    populateEpisodes(episodes);
     $("#episodes-area").toggle();
   })
 });
